@@ -13,7 +13,9 @@ segment .data
 
 segment .bss
     input1      resd    1
-    input2      resd    2
+    input2      resd    1
+    array       resd    11
+
 
 SECTION .txt
     global asm_main
@@ -25,73 +27,71 @@ asm_main:
     call        print_string
     call        print_nl
 
-    ; Get input
-    ;1. sum the digits at odd-numbered positions (first, third, fifth, .... eleventh)
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+    ;testing reverse for loop
+    mov         eax, 0
+    mov         ebx, 10
+    mov         ecx, array
 
-    call        read_int
-    mov         [input1], eax       ; 1. store into input1
+;user input
+reverse_for_loop:
+    cmp         ebx, 0
+    jl          loop_end
+    mov         eax, ebx
+    call        print_int
+    call        print_nl
+    dec         ebx
 
+    ;get user input
     mov         eax, prompt_number
     call        print_string
-
     call        read_int
-    mov         [input2], eax      ; 2. store into input2
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+    ;put user input into the array
+    mov         [ecx], eax
+    add         ecx, 4
+    jmp         reverse_for_loop
+loop_end:
 
-    call        read_int
-    add         [input1], eax       ; 3. adding odd input numbers
+    ;array setup
+    mov         ecx, array          ;set ecx to point to array
+    mov         ebx, 10             ;count down from 11
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+;adding odd and even numbers
+adding_loop:
+    mov         eax, [ecx]          ;move array position into eax
+    add         [input1], eax       ;add current odd input into input1
+    ;call        print_int
+    ;call        print_nl
+    add         ecx, 4              ;move ecx pointer 4 bytes to next position
 
-    call        read_int
-    add         [input2], eax      ; 4. adding even input numbers
+    mov         eax, ebx
+    ;call        print_int
+    ;call        print_nl
+    ;call        print_nl
+    dec         ebx                 ;decrement ebx
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+    cmp         ebx, 0              ;end loop if ebx is 0
+    jl          adding_loop_end
 
-    call        read_int
-    add         [input1], eax       ; 5. adding odd input
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+    mov         eax, [ecx]          ;move array position into eax
+    add         [input2], eax       ;move current even position into intpu2
+    ;call        print_int
+    ;call        print_nl
+    add         ecx, 4              ;move ecx pointer 4 bytes to next position
 
-    call        read_int
-    add         [input2], eax      ; 6. adding even input numbers
+    mov         eax, ebx
+    ;call        print_int
+    ;call        print_nl
+    ;call        print_nl
+    dec         ebx
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
+    cmp         ebx, 0              ;end loop if ebx is 0
+    jl          adding_loop_end
 
-    call        read_int
-    add         [input1], eax       ; 7. adding odd input
+    jmp         adding_loop
+adding_loop_end:
 
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
-
-    call        read_int
-    add         [input2], eax      ; 8. adding even input numbers
-
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
-
-    call        read_int
-    add         [input1], eax       ; 9. adding odd input
-
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
-
-    call        read_int
-    add         [input2], eax      ; 10. adding even input numbers
-
-    mov         eax, prompt_number   ; print out prompt
-    call        print_string
-
-    call        read_int
-    add         [input1], eax       ; 11. adding odd input
 
     ; Question 1. sum of odd numbers
     mov         eax, sum_odd        ;print total of odd numbers
@@ -137,6 +137,9 @@ asm_main:
 
 
     ;5. if M is zero, then the check digit is 0
+    mov         eax, question_5
+    call        print_string
+
     mov         eax, [input1]
     cmp         eax, 0
     jz          false
